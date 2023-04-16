@@ -1,60 +1,536 @@
-[gd_scene load_steps=11 format=3 uid="uid://dhktp0jbgdk2w"]
+[gd_scene load_steps=44 format=3 uid="uid://dhktp0jbgdk2w"]
 
-[ext_resource type="Texture2D" uid="uid://dow04vn5ndcxj" path="res://data/sprite/player/moth.png" id="1"]
 [ext_resource type="AudioStream" uid="uid://d3l1ruuldo55j" path="res://data/sfx/moth/jump.wav" id="2"]
+[ext_resource type="Texture2D" uid="uid://bdy8uqq8t1yix" path="res://data/sprite/player/dash.png" id="2_mefpq"]
 [ext_resource type="Script" path="res://char/player/player.gd" id="3"]
+[ext_resource type="Texture2D" uid="uid://sc5u7thbrji0" path="res://data/sprite/player/idle.png" id="3_xu5pk"]
 [ext_resource type="Script" path="res://char/state_machine.gd" id="4_fxe1r"]
 [ext_resource type="Script" path="res://char/player/states/idle.gd" id="5_sjhu8"]
 [ext_resource type="Script" path="res://char/player/states/walk.gd" id="6_jjl3f"]
 [ext_resource type="Script" path="res://char/player/states/air.gd" id="7_qcg6x"]
+[ext_resource type="Script" path="res://char/player/states/run.gd" id="8_vowdb"]
 [ext_resource type="Script" path="res://char/player/states/glide.gd" id="8_wbjr3"]
+[ext_resource type="Script" path="res://char/player/states/wallcling.gd" id="9_ic317"]
+[ext_resource type="Script" path="res://char/player/debuginfo.gd" id="9_lcim8"]
+[ext_resource type="Script" path="res://char/player/debugangle.gd" id="10_6mxfx"]
+[ext_resource type="Script" path="res://char/player/states/dash.gd" id="11_yurlg"]
+[ext_resource type="Script" path="res://char/player/states/skid.gd" id="13_xomkd"]
+[ext_resource type="Script" path="res://char/player/states/knockback.gd" id="14_cg4f4"]
+[ext_resource type="Script" path="res://char/hitbox.gd" id="17_rouri"]
 
-[sub_resource type="SpriteFrames" id="1"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": ExtResource("1")
-}],
-"loop": true,
-"name": &"default",
-"speed": 5.0
-}]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_jrgh2"]
+size = Vector2(32, 41)
 
-[sub_resource type="RectangleShape2D" id="2"]
-size = Vector2(5, 51)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_v6ass"]
+size = Vector2(25.5, 15)
 
-[node name="Moth" type="CharacterBody2D"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_8f3kb"]
+size = Vector2(36, 22)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_0pjpe"]
+size = Vector2(29.25, 11)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_qc6sl"]
+size = Vector2(19, 14)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_22j4i"]
+size = Vector2(19, 9.75)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_fo1uh"]
+size = Vector2(18, 16)
+
+[sub_resource type="Animation" id="Animation_qvklp"]
+resource_name = "dash"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("2_mefpq")]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("CollisionBox:shape")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [SubResource("RectangleShape2D_jrgh2")]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Hurtbox/Hurtbox1:shape")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [SubResource("RectangleShape2D_v6ass")]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Hurtbox/Hurtbox2:shape")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [SubResource("RectangleShape2D_8f3kb")]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Hurtbox/Hurtbox3:shape")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [SubResource("RectangleShape2D_0pjpe")]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Hurtbox/Hurtbox4:shape")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [SubResource("RectangleShape2D_qc6sl")]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Hurtbox/Hurtbox5:shape")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [SubResource("RectangleShape2D_22j4i")]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("Hurtbox/Hurtbox6:shape")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [SubResource("RectangleShape2D_fo1uh")]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("Hurtbox/Hurtbox1:position")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(3, 31)]
+}
+tracks/9/type = "value"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("Hurtbox/Hurtbox2:position")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(22, 13)]
+}
+tracks/10/type = "value"
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/path = NodePath("Hurtbox/Hurtbox3:position")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(31, 27)]
+}
+tracks/11/type = "value"
+tracks/11/imported = false
+tracks/11/enabled = true
+tracks/11/path = NodePath("Hurtbox/Hurtbox4:position")
+tracks/11/interp = 1
+tracks/11/loop_wrap = true
+tracks/11/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(29, 39)]
+}
+tracks/12/type = "value"
+tracks/12/imported = false
+tracks/12/enabled = true
+tracks/12/path = NodePath("Hurtbox/Hurtbox5:position")
+tracks/12/interp = 1
+tracks/12/loop_wrap = true
+tracks/12/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-18.5, 40.875)]
+}
+tracks/13/type = "value"
+tracks/13/imported = false
+tracks/13/enabled = true
+tracks/13/path = NodePath("Hurtbox/Hurtbox6:position")
+tracks/13/interp = 1
+tracks/13/loop_wrap = true
+tracks/13/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(45, 2)]
+}
+tracks/14/type = "value"
+tracks/14/imported = false
+tracks/14/enabled = true
+tracks/14/path = NodePath("CollisionBox:position")
+tracks/14/interp = 1
+tracks/14/loop_wrap = true
+tracks/14/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 25.5)]
+}
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_d68d5"]
+size = Vector2(32, 64)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_7xhpw"]
+size = Vector2(17, 24)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_l3k6b"]
+size = Vector2(19.25, 26.75)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5qtvo"]
+size = Vector2(23.25, 13)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_qogyc"]
+size = Vector2(9, 28)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_sichh"]
+size = Vector2(9, 19.5)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_57yed"]
+size = Vector2(18, 16)
+
+[sub_resource type="Animation" id="Animation_cklkd"]
+resource_name = "idle"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("3_xu5pk")]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("CollisionBox:shape")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [SubResource("RectangleShape2D_d68d5")]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Hurtbox/Hurtbox1:shape")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [SubResource("RectangleShape2D_7xhpw")]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Hurtbox/Hurtbox2:shape")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [SubResource("RectangleShape2D_l3k6b")]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Hurtbox/Hurtbox3:shape")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [SubResource("RectangleShape2D_5qtvo")]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Hurtbox/Hurtbox4:shape")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [SubResource("RectangleShape2D_qogyc")]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Hurtbox/Hurtbox5:shape")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [SubResource("RectangleShape2D_sichh")]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("Hurtbox/Hurtbox6:shape")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [SubResource("RectangleShape2D_57yed")]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("Hurtbox/Hurtbox1:position")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-7, 17)]
+}
+tracks/9/type = "value"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("Hurtbox/Hurtbox2:position")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-1, -8)]
+}
+tracks/10/type = "value"
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/path = NodePath("Hurtbox/Hurtbox3:position")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(14, 12)]
+}
+tracks/11/type = "value"
+tracks/11/imported = false
+tracks/11/enabled = true
+tracks/11/path = NodePath("Hurtbox/Hurtbox4:position")
+tracks/11/interp = 1
+tracks/11/loop_wrap = true
+tracks/11/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(22, 32)]
+}
+tracks/12/type = "value"
+tracks/12/imported = false
+tracks/12/enabled = true
+tracks/12/path = NodePath("Hurtbox/Hurtbox5:position")
+tracks/12/interp = 1
+tracks/12/loop_wrap = true
+tracks/12/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-18.5, 36)]
+}
+tracks/13/type = "value"
+tracks/13/imported = false
+tracks/13/enabled = true
+tracks/13/path = NodePath("Hurtbox/Hurtbox6:position")
+tracks/13/interp = 1
+tracks/13/loop_wrap = true
+tracks/13/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(6, -29)]
+}
+tracks/14/type = "value"
+tracks/14/imported = false
+tracks/14/enabled = true
+tracks/14/path = NodePath("CollisionBox:position")
+tracks/14/interp = 1
+tracks/14/loop_wrap = true
+tracks/14/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 14)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_6meos"]
+_data = {
+"dash": SubResource("Animation_qvklp"),
+"idle": SubResource("Animation_cklkd")
+}
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_w7urv"]
+animation = &"dash"
+
+[sub_resource type="AnimationNodeTransition" id="AnimationNodeTransition_4rgc0"]
+allow_transition_to_self = true
+input_0/name = "idle"
+input_0/auto_advance = false
+input_0/reset = true
+input_1/name = "dash"
+input_1/auto_advance = false
+input_1/reset = true
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_1waga"]
+animation = &"idle"
+
+[sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_1dise"]
+graph_offset = Vector2(-505.495, -38.9641)
+nodes/dash/node = SubResource("AnimationNodeAnimation_w7urv")
+nodes/dash/position = Vector2(-380, 120)
+nodes/dashing/node = SubResource("AnimationNodeTransition_4rgc0")
+nodes/dashing/position = Vector2(-160, 0)
+nodes/idle/node = SubResource("AnimationNodeAnimation_1waga")
+nodes/idle/position = Vector2(-380, 0)
+nodes/output/position = Vector2(180, 40)
+node_connections = [&"output", 0, &"dashing", &"dashing", 0, &"idle", &"dashing", 1, &"dash"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_geabg"]
+size = Vector2(3.2, 10)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_itkp1"]
+size = Vector2(0.25, 4)
+
+[sub_resource type="SystemFont" id="SystemFont_51l3p"]
+font_names = PackedStringArray("Monospace")
+subpixel_positioning = 0
+
+[sub_resource type="LabelSettings" id="LabelSettings_wdj8s"]
+font = SubResource("SystemFont_51l3p")
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_to18p"]
+
+[node name="Moth" type="CharacterBody2D" groups=["Player"]]
+collision_layer = 2
+collision_mask = 5
 floor_constant_speed = true
 script = ExtResource("3")
 
-[node name="Sprite2D" type="AnimatedSprite2D" parent="."]
-sprite_frames = SubResource("1")
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("3_xu5pk")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_6meos")
+}
+
+[node name="AnimationTree" type="AnimationTree" parent="."]
+tree_root = SubResource("AnimationNodeBlendTree_1dise")
+anim_player = NodePath("../AnimationPlayer")
+active = true
+process_callback = 0
+parameters/dashing/current_state = "idle"
+parameters/dashing/transition_request = ""
+parameters/dashing/current_index = 0
 
 [node name="jumpsfx" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("2")
 volume_db = -4.37
 pitch_scale = 1.1
 
+[node name="CeilingDetector" type="ShapeCast2D" parent="."]
+scale = Vector2(10, 1)
+shape = SubResource("RectangleShape2D_geabg")
+target_position = Vector2(0, -13)
+
+[node name="RightWallDetector" type="Area2D" parent="."]
+position = Vector2(20, 14)
+scale = Vector2(1, 13)
+collision_layer = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RightWallDetector"]
+shape = SubResource("RectangleShape2D_itkp1")
+debug_color = Color(0.980392, 0, 0.364706, 0.419608)
+
+[node name="LeftWallDetector" type="Area2D" parent="."]
+position = Vector2(-20, 14)
+scale = Vector2(1, 13)
+collision_layer = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="LeftWallDetector"]
+shape = SubResource("RectangleShape2D_itkp1")
+debug_color = Color(0.980392, 0, 0.364706, 0.419608)
+
+[node name="CollisionBox" type="CollisionShape2D" parent="."]
+position = Vector2(0, 14)
+shape = SubResource("RectangleShape2D_d68d5")
+
 [node name="PlatformDetector" type="RayCast2D" parent="."]
-position = Vector2(0, 32)
+position = Vector2(0, 46)
 target_position = Vector2(0, 6)
-collision_mask = 8
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0, 6.5)
-shape = SubResource("2")
-
-[node name="RightWallDetector" type="RayCast2D" parent="."]
-position = Vector2(0, 7)
-scale = Vector2(1, 3)
-target_position = Vector2(12, 0)
-collision_mask = 9
-
-[node name="LeftWallDetector" type="RayCast2D" parent="."]
-position = Vector2(0, 7)
-scale = Vector2(1, 3)
-target_position = Vector2(-12, 0)
-collision_mask = 9
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(0, 7)
@@ -70,8 +546,93 @@ script = ExtResource("5_sjhu8")
 [node name="Walk" type="Node" parent="StateMachine"]
 script = ExtResource("6_jjl3f")
 
+[node name="Run" type="Node" parent="StateMachine"]
+script = ExtResource("8_vowdb")
+
 [node name="Air" type="Node" parent="StateMachine"]
 script = ExtResource("7_qcg6x")
 
 [node name="Glide" type="Node" parent="StateMachine"]
 script = ExtResource("8_wbjr3")
+
+[node name="WallCling" type="Node" parent="StateMachine"]
+script = ExtResource("9_ic317")
+
+[node name="Dash" type="Node" parent="StateMachine"]
+script = ExtResource("11_yurlg")
+
+[node name="Skid" type="Node" parent="StateMachine"]
+script = ExtResource("13_xomkd")
+
+[node name="Hitstun" type="Node" parent="StateMachine"]
+script = ExtResource("14_cg4f4")
+
+[node name="DebugInfo" type="CanvasLayer" parent="."]
+script = ExtResource("9_lcim8")
+
+[node name="CharInfo" type="Label" parent="DebugInfo"]
+offset_left = 26.0
+offset_top = 20.0
+offset_right = 71.0
+offset_bottom = 46.0
+text = "Hello!"
+label_settings = SubResource("LabelSettings_wdj8s")
+metadata/_edit_use_anchors_ = true
+
+[node name="AngleInfo" type="Node2D" parent="DebugInfo"]
+position = Vector2(210, 30)
+script = ExtResource("10_6mxfx")
+
+[node name="Hurtbox" type="Area2D" parent="."]
+collision_layer = 2
+collision_mask = 4
+
+[node name="Hurtbox1" type="CollisionShape2D" parent="Hurtbox"]
+position = Vector2(-7, 17)
+shape = SubResource("RectangleShape2D_7xhpw")
+debug_color = Color(0.152941, 0.647059, 0, 0.419608)
+
+[node name="Hurtbox2" type="CollisionShape2D" parent="Hurtbox"]
+position = Vector2(-1, -8)
+shape = SubResource("RectangleShape2D_l3k6b")
+debug_color = Color(0.152941, 0.647059, 0, 0.419608)
+
+[node name="Hurtbox3" type="CollisionShape2D" parent="Hurtbox"]
+position = Vector2(14, 12)
+shape = SubResource("RectangleShape2D_5qtvo")
+debug_color = Color(0.152941, 0.647059, 0, 0.419608)
+
+[node name="Hurtbox4" type="CollisionShape2D" parent="Hurtbox"]
+position = Vector2(22, 32)
+shape = SubResource("RectangleShape2D_qogyc")
+debug_color = Color(0.152941, 0.647059, 0, 0.419608)
+
+[node name="Hurtbox5" type="CollisionShape2D" parent="Hurtbox"]
+position = Vector2(-18.5, 36)
+shape = SubResource("RectangleShape2D_sichh")
+debug_color = Color(0.152941, 0.647059, 0, 0.419608)
+
+[node name="Hurtbox6" type="CollisionShape2D" parent="Hurtbox"]
+position = Vector2(6, -29)
+shape = SubResource("RectangleShape2D_57yed")
+debug_color = Color(0.152941, 0.647059, 0, 0.419608)
+
+[node name="Hitbox" type="Area2D" parent="."]
+collision_layer = 2
+collision_mask = 4
+script = ExtResource("17_rouri")
+
+[node name="Hitbox1" type="CollisionShape2D" parent="Hitbox"]
+shape = SubResource("RectangleShape2D_to18p")
+disabled = true
+debug_color = Color(0.992157, 0, 0.247059, 0.419608)
+
+[node name="Hitbox2" type="CollisionShape2D" parent="Hitbox"]
+shape = SubResource("RectangleShape2D_to18p")
+disabled = true
+debug_color = Color(0.992157, 0, 0.247059, 0.419608)
+
+[node name="Hitbox3" type="CollisionShape2D" parent="Hitbox"]
+shape = SubResource("RectangleShape2D_to18p")
+disabled = true
+debug_color = Color(0.992157, 0, 0.247059, 0.419608)

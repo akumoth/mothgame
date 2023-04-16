@@ -1,8 +1,8 @@
-class_name PlayerState
+class_name EnemyState
 extends State
 
 # Typed reference to the player node.
-var player: Moth
+var enemy: Enemy
 
 
 func _ready() -> void:
@@ -11,8 +11,8 @@ func _ready() -> void:
 	await owner.ready
 	# The `as` keyword casts the `owner` variable to the `Player` type.
 	# If the `owner` is not a `Player`, we'll get `null`.
-	player = owner as Moth
+	enemy = owner as Enemy
 	# This check will tell us if we inadvertently assign a derived state script
 	# in a scene other than `Player.tscn`, which would be unintended. This can
 	# help prevent some bugs that are difficult to understand.	
-	assert(player != null)
+	assert(enemy != null)
